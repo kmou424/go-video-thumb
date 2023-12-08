@@ -73,7 +73,6 @@ jobs:
           mkdir -p build/release
           mv $ZIP_FILENAME build/release/$ZIP_FILENAME
           
-          VERSION=$(echo ${GITHUB_REF} | sed -e "s/refs\/tags\///g")
           echo "artifact_name=$VERSION" >> $GITHUB_ENV
 
       - uses: actions/upload-artifact@v3
@@ -95,8 +94,11 @@ jobs:
           VERSION=$(echo ${GITHUB_REF} | sed -e "s/refs\/tags\///g")
           mv build/release/$VERSION/*.zip build/release
           rm -r build/release/$VERSION
+          
+          echo "TAG=$VERSION" >> $GITHUB_ENV
 
       - uses: ncipollo/release-action@v1
+        if: ${{ !contains(env.TAG, 'beta') && !contains(env.TAG, 'alpha') && !contains(env.TAG, 'canary') }}
         with:
           artifacts: "build/release/*.zip"
           token: ${{ secrets.GH_TOKEN }}
