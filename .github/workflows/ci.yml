@@ -1,0 +1,102 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: 386
+          - goos: linux
+            goarch: arm
+          - goos: linux
+            goarch: arm64
+          - goos: linux
+            goarch: mips
+          - goos: linux
+            goarch: mips64
+          - goos: linux
+            goarch: mipsle
+          - goos: linux
+            goarch: mips64le
+          - goos: linux
+            goarch: riscv64
+          - goos: windows
+            goarch: amd64
+          - goos: windows
+            goarch: 386
+          - goos: windows
+            goarch: arm64
+          - goos: darwin
+            goarch: amd64
+          - goos: darwin
+            goarch: arm64
+
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '^1.13.1'
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up requirements
+        run: sudo apt-get install -y upx zip
+
+      - name: Build and Release
+        run: |
+          VERSION=$(echo ${GITHUB_REF} | sed -e "s/refs\/tags\///g")
+          FILENAME="video-thumb-$VERSION-${{ matrix.goarch }}_${{ matrix.goos }}"
+          ZIP_FILENAME=$FILENAME.zip
+          
+          if [ "${{ matrix.goos }}" == "windows" ]; then
+            FILENAME="$FILENAME.exe"
+          fi
+
+          go mod tidy
+          
+          make build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }}
+          mv build/$FILENAME $FILENAME
+          zip $ZIP_FILENAME $FILENAME
+          rm $FILENAME
+          
+          mkdir -p build/release
+          mv $ZIP_FILENAME build/release/$ZIP_FILENAME
+          
+          VERSION=$(echo ${GITHUB_REF} | sed -e "s/refs\/tags\///g")
+          echo "artifact_name=$VERSION" >> $GITHUB_ENV
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.artifact_name }}
+          path: build/release
+
+  release:
+    name: Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: build/release
+
+      - name: Move artifacts
+        run: |
+          VERSION=$(echo ${GITHUB_REF} | sed -e "s/refs\/tags\///g")
+          mv build/release/$VERSION/*.zip build/release
+          rm -r build/release/$VERSION
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/release/*.zip"
+          token: ${{ secrets.GH_TOKEN }}
