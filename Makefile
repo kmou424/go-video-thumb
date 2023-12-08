@@ -1,9 +1,9 @@
 # 检查操作系统类型
 ifeq ($(OS),Windows_NT)
-  IGNORE_OUTPUT := >NUL 2>&1
+	IGNORE_OUTPUT := >NUL 2>&1
 	RM := powershell.exe -Command "Remove-Item -Force -Recurse"
 else
-  IGNORE_OUTPUT := >/dev/null 2>&1
+	IGNORE_OUTPUT := >/dev/null 2>&1
 	RM := rm -rf
 endif
 
