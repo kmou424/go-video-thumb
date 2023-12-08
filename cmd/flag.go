@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/gookit/goutil/fsutil"
 	"github.com/gookit/goutil/strutil"
-	"github.com/kmou424/go-video-thumb/internal/global"
 	"github.com/kmou424/go-video-thumb/internal/tool"
 	"os"
 )
@@ -21,6 +20,8 @@ var (
 	version bool
 )
 
+var BuildVersion string
+
 func parseArgs() {
 	flag.StringVar(&inputFile, "i", "", "input video file")
 	flag.IntVar(&imageColumns, "cols", 5, "columns of thumbnails grid")
@@ -34,7 +35,7 @@ func parseArgs() {
 	if version {
 		fmt.Printf(`video-thumb v%s
 Copyright (c) 2023 kmou424
-`, global.Version)
+`, BuildVersion)
 		os.Exit(0)
 	}
 

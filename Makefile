@@ -10,8 +10,13 @@ endif
 GOOS := $(shell go env GOOS)
 GOARCH := $(shell go env GOARCH)
 
+ifeq ($(VERSION),)
+$(error VERSION environment variable is not set)
+endif
+
+VERSION ?= $(VERSION)
+
 EXE_NAME = video-thumb
-VERSION := 1.0.0
 EXTENSION ?=
 
 ifeq ($(GOOS),windows)
@@ -25,8 +30,8 @@ OUTPUT_NAME := $(EXE_NAME)-$(VERSION)-$(GOARCH)_$(GOOS)$(EXTENSION)
 BUILD_DIR := build
 
 # 编译命令
-BUILD_CMD_RELEASE := go build -a -v -trimpath -ldflags="-s -w" -tags="release" -o $(BUILD_DIR)/$(OUTPUT_NAME) github.com/kmou424/go-video-thumb/cmd
-BUILD_CMD_DEBUG := go build -a -v -trimpath -ldflags="-s -w" -o $(BUILD_DIR)/$(OUTPUT_NAME) github.com/kmou424/go-video-thumb/cmd
+BUILD_CMD_RELEASE := go build -a -v -trimpath -ldflags="-s -w -X main.BuildVersion=${VERSION}" -tags="release" -o $(BUILD_DIR)/$(OUTPUT_NAME) github.com/kmou424/go-video-thumb/cmd
+BUILD_CMD_DEBUG := go build -a -v -trimpath -ldflags="-s -w -X main.BuildVersion=${VERSION}" -o $(BUILD_DIR)/$(OUTPUT_NAME) github.com/kmou424/go-video-thumb/cmd
 
 .PHONY: all build clean
 
