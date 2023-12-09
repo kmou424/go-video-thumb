@@ -50,7 +50,7 @@ func Draw() {
 			log := fmt.Sprintf("processing: %s", path)
 			info, err := vidtool.GetVideoInfo(path)
 			if err != nil {
-				tool.Logger.Info(log, "not a video")
+				tool.Logger.Info(log, "is not a video")
 				return nil
 			}
 			videoInfo = *info
