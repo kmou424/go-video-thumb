@@ -98,7 +98,9 @@ jobs:
           echo "TAG=$VERSION" >> $GITHUB_ENV
 
       - uses: ncipollo/release-action@v1
-        if: ${{ !contains(env.TAG, 'beta') && !contains(env.TAG, 'alpha') && !contains(env.TAG, 'canary') && !contains(env.TAG, 'no-release') }}
+        if: ${{ !contains(env.TAG, 'experimental') }}
         with:
+          allowUpdates: true
           artifacts: "build/release/*.zip"
+          prerelease: ${{ contains(env.TAG, 'pre') }}
           token: ${{ secrets.GH_TOKEN }}
