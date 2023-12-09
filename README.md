@@ -19,7 +19,12 @@
 ## Usage
 
 ```bash
+# local video file
 $ video-thumb -i video.mp4
+# local directory, program will walk the directory and automatically process the video
+$ video-thumb -i /dir/to/your/videos
+# online video file
+$ video-thumb -i http://example.com/video.mp4
 ```
 
 It also supports the drag gesture on Windows. You can drag a video onto the `video-thumb` executable file.
