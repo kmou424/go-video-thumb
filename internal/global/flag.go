@@ -40,6 +40,8 @@ func CheckArgs() error {
 	}
 
 	switch {
+	case strutil.IsStartsOf(Input, []string{"https://", "http://"}):
+		InputType = "http"
 	case fsutil.IsFile(Input):
 		InputType = "file"
 	case fsutil.IsDir(Input):
