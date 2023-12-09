@@ -14,6 +14,7 @@ var (
 	ImageRows    int
 	FontSize     int
 	NoHeader     bool
+	Output       string
 
 	Version bool
 )
@@ -27,6 +28,7 @@ func ParseArgs() {
 	flag.IntVar(&FontSize, "font-size", 20, "font size of header text")
 	flag.BoolVar(&NoHeader, "no-header", false, "do not generate header")
 	flag.BoolVar(&Version, "version", false, "show version")
+	flag.StringVar(&Output, "o", "", "output directory of the generated image")
 
 	flag.Parse()
 }
@@ -48,6 +50,19 @@ func CheckArgs() error {
 		InputType = "dir"
 	default:
 		return fmt.Errorf("invalid input: %s", Input)
+	}
+
+	if Output != "" {
+		if fsutil.IsFile(Output) {
+			return fmt.Errorf("invalid output: %s", Output)
+		}
+
+		if !fsutil.IsDir(Output) {
+			err := fsutil.Mkdir(Output, os.ModeDir)
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

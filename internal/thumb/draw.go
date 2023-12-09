@@ -32,7 +32,7 @@ func Draw() {
 			tool.ErrorExit()
 		}
 		videoInfo = *info
-		tool.Logger.Info("detected http video")
+		tool.Logger.Info("http video detected")
 		drawVideoThumb(global.Input)
 	case "file":
 		info, err := vidtool.GetVideoInfo(global.Input)
@@ -95,11 +95,21 @@ func drawVideoThumb(videoFile string) {
 		tool.ErrorExit()
 	}
 
-	imageFileName := videoInfo.FileName
-	if filepath.Ext(imageFileName) != "" {
-		imageFileName = imageFileName[:len(imageFileName)-len(filepath.Ext(imageFileName))]
+	imageFilePath := videoFile
+	if global.InputType == "http" {
+		imageFilePath = videoInfo.FileName
 	}
-	err = imgtool.SaveImage(combinedImage, fmt.Sprintf("%s.png", imageFileName))
+	dirName := filepath.Dir(imageFilePath)
+	fileName := filepath.Base(imageFilePath)
+	if filepath.Ext(fileName) != "" {
+		fileName = fileName[:len(fileName)-len(filepath.Ext(fileName))]
+	}
+
+	if global.Output != "" {
+		dirName = global.Output
+	}
+
+	err = imgtool.SaveImage(combinedImage, fmt.Sprintf("%s.png", filepath.Join(dirName, fileName)))
 	if err != nil {
 		tool.Logger.Error(err)
 		tool.ErrorExit()
