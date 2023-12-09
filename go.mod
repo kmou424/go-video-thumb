@@ -16,7 +16,6 @@ require (
 
 require (
 	github.com/aws/aws-sdk-go v1.48.15 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gookit/color v1.5.4 // indirect
 	github.com/gookit/gsr v0.1.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
