@@ -2,14 +2,15 @@ package thumb
 
 import (
 	"fmt"
+	"image"
+	"io/fs"
+	"path/filepath"
+
 	"github.com/gookit/goutil/fsutil"
 	"github.com/kmou424/go-video-thumb/internal/global"
 	"github.com/kmou424/go-video-thumb/internal/tool"
 	"github.com/kmou424/go-video-thumb/internal/tool/imgtool"
 	"github.com/kmou424/go-video-thumb/internal/tool/vidtool"
-	"image"
-	"io/fs"
-	"path/filepath"
 )
 
 var (
@@ -67,6 +68,9 @@ func Draw() {
 
 func drawVideoThumb(videoFile string) {
 	for _, streamInfo := range videoInfo.StreamInfos {
+		if streamInfo.ExpDuration == "" {
+			streamInfo.ExpDuration = videoInfo.FormatInfo.Duration
+		}
 		switch streamInfo.Type {
 		case "video":
 			vStream = *streamInfo.AsStream()
