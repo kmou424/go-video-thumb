@@ -3,11 +3,12 @@ package vidtool
 import (
 	"encoding/json"
 	"fmt"
+	"path/filepath"
+
 	"github.com/gookit/goutil/mathutil"
 	"github.com/kmou424/go-video-thumb/internal/tool"
 	"github.com/kmou424/go-video-thumb/internal/tool/mathtool"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
-	"path/filepath"
 )
 
 type Stream struct {
@@ -23,6 +24,12 @@ type Stream struct {
 	PixelFormat        string
 }
 
+type VideoInfo struct {
+	StreamInfos []StreamInfo `json:"streams"`
+	FormatInfo  `json:"format"`
+	FileName    string `json:"-"`
+}
+
 type StreamInfo struct {
 	Type               string `json:"codec_type"`
 	Codec              string `json:"codec_name"`
@@ -34,6 +41,11 @@ type StreamInfo struct {
 	ExpDuration        string `json:"duration"`
 	ExpRFrameRate      string `json:"r_frame_rate"`
 	PixelFormat        string `json:"pix_fmt"`
+}
+
+type FormatInfo struct {
+	Size     string `json:"size"`
+	Duration string `json:"duration"`
 }
 
 func (s *StreamInfo) AsStream() *Stream {
@@ -73,16 +85,6 @@ func (s *StreamInfo) AsStream() *Stream {
 		}(),
 		PixelFormat: s.PixelFormat,
 	}
-}
-
-type FormatInfo struct {
-	Size string `json:"size"`
-}
-
-type VideoInfo struct {
-	StreamInfos []StreamInfo `json:"streams"`
-	FormatInfo  `json:"format"`
-	FileName    string `json:"-"`
 }
 
 func (v *VideoInfo) FormatSize() map[string]string {
